@@ -1,0 +1,67 @@
+1. Install required libraries
+1.1 FFTW - Build for Linux (need to run CallSeeker under Linux to test/debug)
+./configure --enable-single --enable-sse --enable-sse2 --enable-avx --enable-avx2 --enable-avx512 --enable-avx-128-fma --enable-openmp --enable-shared --with-our-malloc
+make -j8
+sudo make install
+
+
+
+ Build with CMAKE!
+
+Configure (whithout instructions AVX, SSE...)
+
+Edit the config.h file with "#define WITH_OUR_MALLOC 1"
+
+Generate
+
+Use the full path to mingw32-make, not just "make"
+
+
+1.2 libsndfile
+sudo apt install libsndfile1-dev 
+
+1.3 zlib
+sudo apt install zlib1g-dev
+
+1.4 tensorflow (version 1.13.1)
+1.4.1 Download and install bazel 0.25
+Follow instructions from https://docs.bazel.build/versions/master/install-ubuntu.html
+1.4.2 Download and compile tensorflow C++
+./configure
+./bazel build -s //tensorflow:libtensorflow_cc.so --define framework_shared_object=true --crosstool_top=//third_party/toolchains/preconfig/win_1803/bazel_025:toolchain --compiler='mingw-gcc' --jobs=8 --cxxopt='-DNDEBUG' --cxxopt='-O2' --cxxopt='-DWINVER=0x0A00' --cxxopt='-std=gnu++11' --cxxopt='-D_WIN32_WINNT=0x0A00'
+
+# Cross compile for Windows
+
+1. Install mingw-w64
+sudo apt install mingw-w64
+
+2. Build tensorflow for Windows
+2.1. 
+
+export CC=`which x86_64-w64-mingw32-gcc`
+export CXX=`which x86_64-w64-mingw32-g++`
+
+
+
+2. Download Qt from the internet
+
+2.1. Build qtbase
+cd ~/Qt/Src/qtbase
+./configure -xplatform win32-g++ -device-option CROSS_COMPILE=x86_64-w64-mingw32- -prefix ~/Qt/mingw540_64 -confirm-license -no-compile-examples -opengl desktop -opensource
+
+make -j8 # Parallel build using 8 cpus.
+make install
+
+2.2. Post-install
+- Set the C compiler to x86_64-w64-mingw-gcc
+- Set the C++ compiler to x86_64-w64-mingw-g++
+- Set the debugger to none.
+- Set the Qt version to use to ~/Qt/mingw540_64
+
+
+For additional info check https://uncannier.com/cross-compile-qt-mingw-windows-applications-on-a-linux-host/
+
+
+
+
+
